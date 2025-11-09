@@ -44,6 +44,29 @@ async function run() {
       res.send(result);
     });
 
+    app.put("/events/:id", async (req, res) => {
+      const id = req.params.id;
+      const updatedEvent = req.body;
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updateDoc = {
+        $set: {
+          title: updatedEvent.title,
+          description: updatedEvent.description,
+          eventType: updatedEvent.eventType,
+          thumbnail: updatedEvent.thumbnail,
+          location: updatedEvent.location,
+          eventDate: updatedEvent.eventDate,
+        },
+      };
+      const result = await eventsCollection.updateOne(
+        filter,
+        updateDoc,
+        options
+      );
+      res.send(result);
+    });
+
     console.log("MongoDB Pinged Successfully");
   } finally {
   }
