@@ -72,6 +72,12 @@ async function run() {
       res.send(result);
     });
 
+    app.post("/joinedEvents", async (req, res) => {
+      const joinedEvent = req.body;
+      const result = await joinedEventsCollection.insertOne(joinedEvent);
+      res.send(result);
+    });
+
     console.log("MongoDB Pinged Successfully");
   } finally {
   }
