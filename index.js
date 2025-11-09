@@ -67,6 +67,11 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/joinedEvents", async (req, res) => {
+      const result = await joinedEventsCollection.find().toArray();
+      res.send(result);
+    });
+
     console.log("MongoDB Pinged Successfully");
   } finally {
   }
