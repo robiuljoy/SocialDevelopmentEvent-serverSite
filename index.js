@@ -38,6 +38,12 @@ async function run() {
       res.send(result);
     });
 
+    app.post("/events", async (req, res) => {
+      const newEvent = req.body;
+      const result = await eventsCollection.insertOne(newEvent);
+      res.send(result);
+    });
+
     console.log("MongoDB Pinged Successfully");
   } finally {
   }
