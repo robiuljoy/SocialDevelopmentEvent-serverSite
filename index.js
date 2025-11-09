@@ -25,8 +25,17 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
+
+    const db = client.db("social_work_db");
+    const mainCollection = db.collection("main");
+
+    app.get("/main", async (req, res) => {
+      const result = await mainCollection.find().toArray();
+
+      res.send(result);
+    });
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
