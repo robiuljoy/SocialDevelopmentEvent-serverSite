@@ -24,18 +24,52 @@ async function run() {
     await client.connect();
 
     const db = client.db("social_work_db");
+    const mainCollection = db.collection("main");
     const eventsCollection = db.collection("events");
     const joinedEventsCollection = db.collection("joinedEvents");
 
     app.get("/events", async (req, res) => {
-      const result = await eventsCollection.find().toArray();
-      res.send(result);
+      try {
+        const { eventType, search } = req.query;
+        let query = {};
+
+        if (eventType && eventType !== "All") {
+          query.eventType = eventType;
+        }
+
+        if (search) {
+          query.title = { $regex: search, $options: "i" };
+        }
+
+        const result = await eventsCollection.find(query).toArray();
+        res.send(result);
+      } catch (err) {
+        console.log(err);
+        res.status(500).send({ message: "Server error" });
+      }
+    });
+
+    app.get("/main", async (req, res) => {
+      try {
+        const result = await mainCollection.find().toArray();
+        res.send(result);
+      } catch (error) {
+        console.error(error);
+        res.status(500).send({ message: "Failed to fetch main collection" });
+      }
     });
 
     app.get("/events/:id", async (req, res) => {
-      const id = req.params.id;
-      const result = await eventsCollection.findOne({ _id: new ObjectId(id) });
-      res.send(result);
+      try {
+        const id = req.params.id;
+        const event = await eventsCollection.findOne({ _id: new ObjectId(id) });
+        if (!event) {
+          return res.status(404).json({ message: "Event not found" });
+        }
+        res.json(event);
+      } catch (error) {
+        res.status(500).json({ message: "Server error" });
+      }
     });
 
     app.post("/events", async (req, res) => {
