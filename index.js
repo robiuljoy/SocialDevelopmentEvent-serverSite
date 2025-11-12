@@ -21,7 +21,7 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    await client.connect();
+    // await client.connect();
 
     const db = client.db("social_work_db");
     const mainCollection = db.collection("main");
@@ -122,4 +122,6 @@ app.get("/", (req, res) => {
   res.send("Social Development Events Server is Running...");
 });
 
-module.exports = app;
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+});
